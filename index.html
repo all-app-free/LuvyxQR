@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luvyx QR Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root { --bg: #0f0f0f; --panel: #1e1e1e; --accent: #3498db; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
+        
+        h1 { color: var(--accent); margin-bottom: 25px; font-size: 1.5rem; }
+        
+        .container { background: var(--panel); padding: 25px; border-radius: 15px; width: 100%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+        
+        input { width: 100%; padding: 12px; border: 1px solid #333; background: #121212; color: white; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--accent); }
+        
+        #qrcode { background: white; padding: 15px; border-radius: 10px; display: inline-block; margin-top: 10px; min-height: 128px; }
+        #qrcode img { display: block; margin: 0 auto; }
+
+        .hint { margin-top: 20px; font-size: 0.8rem; color: #888; }
+        button { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>Luvyx QR</h1>
+
+    <div class="container">
+        <input type="text" id="text-input" placeholder="Vložte URL nebo text..." oninput="generateQR()">
+        
+        <div id="qrcode"></div>
+        
+        <p class="hint">QR kód se generuje automaticky při psaní.</p>
+        <button onclick="downloadQR()">Uložit jako obrázek</button>
+    </div>
+
+    <script>
+        // Inicializace QR generátoru
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            width: 200,
+            height: 200,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
+        function generateQR() {
+            var text = document.getElementById("text-input").value;
+            if (!text) {
+                qrcode.clear(); 
+                return;
+            }
+            qrcode.makeCode(text);
+        }
+
+        function downloadQR() {
+            const img = document.querySelector('#qrcode img');
+            if (!img) return alert("Nejdříve něco napište!");
+            
+            const link = document.createElement('a');
+            link.download = 'luvyx-qr.png';
+            link.href = img.src;
+            link.click();
+        }
+
+        // Výchozí kód při načtení
+        window.onload = () => {
+            document.getElementById("text-input").value = "https://luvyx.github.io";
+            generateQR();
+        };
+    </script>
+</body>
+</html>
+
